@@ -1,37 +1,424 @@
+/* --- Estilos Gerais (Base do Código 1) --- */
 body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #f1f1f1;
+  color: #333;
+  line-height: 1.6;
   margin: 0;
-  font-family: Arial, sans-serif;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background: #f1f2f6;
-}
-
-#container {
-  display: flex;
-  gap: 16px;
-  max-width: 100%;
-  max-height: 100vh;
-  padding: 20px;
-  box-sizing: border-box;
-}
-
-canvas {
-  border: 2px solid #ccc;
-  max-width: 80vw;
-  max-height: 80vh;
-}
-
-#controls {
+  padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  align-items: center;
+  padding: 30px 15px 50px;
 }
 
-button, input[type="color"], input[type="range"] {
-  padding: 8px;
-  border-radius: 8px;
+main {
+  max-width: 900px;
+  width: 100%;
+  margin-bottom: 40px;
+  padding: 20px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+h2 {
+  color: #0a9f82;
+  margin-top: 40px;
+  margin-bottom: 20px;
+}
+
+.tip {
+  margin-bottom: 20px;
+  padding-left: 15px;
+  border-left: 4px solid #0a9f82;
+}
+
+.tip strong {
+  display: block;
+  margin-bottom: 5px;
+  color: #111;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+table th, table td {
   border: 1px solid #ccc;
+  padding: 10px;
+  text-align: left;
+}
+
+table th {
+  background-color: #0a9f82;
+  color: white;
+}
+
+.warning { color: #b58900; }
+.danger { color: #dc322f; }
+
+footer {
+  text-align: center;
+  padding: 20px;
+  font-size: 14px;
+  color: #888;
+  width: 100%;
+  max-width: 900px;
+}
+
+/* --- Estilos do Mascarador (Código 1) --- */
+#mascarador-container {
+  background: white;
+  border-radius: 15px;
+  margin-bottom: 40px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  padding: 20px 30px;
+  max-width: 900px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative; /* Adicionado para posicionar o botão de ajuda */
+}
+
+#mascarador-container h1 {
+  font-size: 28px;
+  margin-bottom: 20px;
+  color: #0a9f82;
+}
+
+/* MODIFICADO: Estilo para os botões de ajuda */
+.ajuda-btn {
+    background: #e9ecef;
+    border: 1px solid #dee2e6;
+    color: #495057;
+    padding: 4px 12px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.ajuda-btn:hover {
+    background: #ced4da;
+    transform: translateY(-1px);
+}
+
+/* NOVO: Posição absoluta para o botão de ajuda do mascarador */
+#ajuda-mascarador-btn {
+    position: absolute;
+    top: 25px;
+    right: 30px;
+}
+
+
+.mascarador-form {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  max-width: 800px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+select, input, button {
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  font-family: 'Poppins', sans-serif;
+}
+
+select {
+  width: 200px;
+  padding-right: 30px;
+  appearance: none;
+  background: url('data:image/svg+xml;utf8,<svg fill="gray" height="10" width="10" xmlns="http://www.w3.org/2000/svg"><polygon points="0,0 10,0 5,7"/></svg>') no-repeat right 10px center;
+  background-size: 10px 7px;
   cursor: pointer;
+}
+
+input {
+  flex: 1;
+  min-width: 150px;
+}
+
+#agencia, #conta {
+  flex: none;
+}
+
+#botaoCopiar {
+  background-color: #0a9f82;
+  color: white;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  min-width: 100px;
+}
+
+#botaoCopiar:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+}
+
+#botaoCopiar:active {
+  transform: scale(0.95);
+}
+
+.copied {
+  animation: flash 0.5s ease;
+}
+
+@keyframes flash {
+  0% { background-color: #22c55e; }
+  50% { background-color: #16a34a; }
+  100% { background-color: #22c55e; }
+}
+
+.output {
+  margin-top: 20px;
+  text-align: center;
+  font-weight: bold;
+  word-break: break-word;
+  min-height: 1.2em;
+  color: #0a9f82;
+  font-size: 18px;
+  font-family: monospace;
+}
+
+.note {
+  margin-top: 20px;
+  color: #666;
+  font-size: 14px;
+  text-align: center;
+  max-width: 800px;
+}
+
+#alerta-bancario {
+  display: none;
+  background-color: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeeba;
+  padding: 12px 16px;
+  border-radius: 6px;
+  margin-top: 15px;
+  font-size: 12px;
+  max-width: 800px;
+  text-align: center;
+  font-weight: 600;
+}
+
+/* --- Estilos do Editor de Imagens (Código 2) --- */
+:root {
+  --main-bg: #f1f1f1; --main-color: #333; --accent: #1abc9c; --accent-dark: #16a085;
+  --danger: #e74c3c; --danger-dark: #c0392b; --font-family: "Poppins", sans-serif;
+  --border-radius: 8px; --transition: 0.2s ease-in-out; --shadow: rgba(0, 0, 0, 0.1);
+  --light-gray: #f8f9fa; --border-color: #dee2e6;
+}
+* { box-sizing: border-box; }
+
+#imagem-editor-container h1 {
+  margin-bottom: 20px; font-size: 2.4rem; font-weight: 700;
+  color: var(--accent-dark); text-shadow: 0 1px 3px var(--shadow);
+}
+.main-layout {
+  display: flex; align-items: flex-start; gap: 30px;
+  margin-top: 35px; flex-wrap: wrap; justify-content: center;
+}
+.controls {
+  width: 100%; max-width: 420px; background: white; padding: 25px 30px;
+  border-radius: var(--border-radius); box-shadow: 0 4px 12px var(--shadow);
+  display: flex; flex-direction: column; gap: 20px; user-select: none;
+}
+.control-group {
+  display: flex; flex-direction: column; gap: 10px; text-align: left;
+}
+.control-group label {
+  font-weight: 600; justify-content: space-between; align-items: center;
+}
+.hidden { display: none !important; }
+
+.tool-selection {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+}
+.tool-btn {
+  padding: 12px 5px; font-weight: 600; border-radius: var(--border-radius);
+  cursor: pointer; display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: 6px; transition: all var(--transition);
+  background-color: var(--light-gray); border: 1px solid var(--border-color); color: #495057;
+}
+.tool-btn:hover:not(.active) {
+  background-color: #e9ecef; border-color: #adb5bd; transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+}
+.tool-btn.active {
+  background-color: #e6fffa; color: var(--accent-dark); border: 1px solid var(--accent);
+  font-weight: 700; box-shadow: 0 0 12px rgba(26, 188, 156, 0.4);
+}
+.tool-btn svg { width: 20px; height: 20px; }
+
+.drawing-controls { display: flex; align-items: center; gap: 15px; }
+.drawing-controls input[type="color"] {
+  -webkit-appearance: none; -moz-appearance: none; appearance: none;
+  flex: none; /* Impede que o elemento se estique */
+  width: 40px; height: 40px; padding: 0; background-color: transparent;
+  min-width: 40px; /* Sobrescreve o min-width geral */
+  border: 1px solid #ccc; border-radius: 50%; cursor: pointer;
+}
+.drawing-controls input[type="color"]::-webkit-color-swatch { border: none; border-radius: 50%; }
+.drawing-controls input[type="color"]::-moz-color-swatch { border: none; border-radius: 50%; }
+.drawing-controls .slider-container { flex: 1; }
+
+input[type="range"] {
+  width: 100%; cursor: pointer; accent-color: var(--accent); height: 8px;
+  background: #e0e0e0; border-radius: var(--border-radius);
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 20px; height: 20px; background: var(--accent-dark);
+  border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 5px rgba(0,0,0,0.2);
+}
+
+.canvas-wrapper {
+  position: relative; box-shadow: 0 0 20px var(--shadow);
+  border-radius: var(--border-radius); background: white; padding: 12px;
+  transition: width 0.3s ease, height 0.3s ease;
+}
+#mainCanvas, #previewCanvas {
+  position: absolute; top: 12px; left: 12px; display: block;
+}
+#mainCanvas.empty { border: 2px dashed #ccc; background-color: #f9f9f9; }
+#previewCanvas { z-index: 5; }
+#selectionBox {
+  position: absolute; border: 2px dashed var(--accent-dark); pointer-events: none;
+  display: none; background: rgba(22, 160, 133, 0.15); z-index: 10;
+}
+
+.btn-group { display: flex; flex-wrap: wrap; gap: 12px; }
+.btn-group button {
+  flex: 1 1 calc(50% - 12px); padding: 12px 0; font-size: 1rem; font-weight: 600;
+  border: none; border-radius: var(--border-radius); cursor: pointer; color: white;
+  box-shadow: 0 2px 6px var(--shadow); transition: background-color var(--transition), box-shadow var(--transition);
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+button:disabled { background-color: #bdc3c7; cursor: not-allowed; box-shadow: none; }
+button:disabled:hover { background-color: #bdc3c7; }
+#undoBtn { background-color: #3498db; } #undoBtn:hover:not(:disabled) { background-color: #2980b9; }
+#redoBtn { background-color: #9b59b6; } #redoBtn:hover:not(:disabled) { background-color: #8e44ad; }
+#downloadBtn { background-color: var(--accent); } #downloadBtn:hover:not(:disabled) { background-color: var(--accent-dark); }
+#clearBtn { background-color: var(--danger); } #clearBtn:hover:not(:disabled) { background-color: var(--danger-dark); }
+
+.paste-info { font-size: 0.9rem; color: #666; margin-top: -5px; }
+
+#overlay { 
+  position: fixed; inset: 0; background: rgba(0, 0, 0, 0.5); 
+  z-index: 9998; backdrop-filter: blur(3px); 
+}
+#confirmDialog {
+    position: absolute; left: 50%; transform: translate(-50%, -50%);
+    background: white; padding: 25px 30px; border-radius: var(--border-radius);
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2); z-index: 9999;
+    max-width: 360px; width: 90%; text-align: center;
+}
+#confirmDialog h2 { font-size: 1.5rem; margin-top: 0; margin-bottom: 10px; }
+#confirmDialog p { font-size: 1rem; color: #555; margin-bottom: 25px; line-height: 1.5; }
+.dialog-actions { display: flex; gap: 15px; flex-direction: column-reverse; }
+.dialog-actions button {
+    flex: 1; padding: 12px 20px; font-size: 1rem; font-weight: 600;
+    border: 1px solid transparent; border-radius: var(--border-radius);
+    cursor: pointer; transition: all var(--transition);
+    display: flex; align-items: center; justify-content: center; gap: 8px; 
+}
+.dialog-actions button svg { width: 16px; height: 16px; fill: currentColor; }
+#confirmYes { background-color: var(--danger); color: white; border-color: var(--danger); }
+#confirmYes:hover { background-color: var(--danger-dark); border-color: var(--danger-dark); transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+#confirmNo { background-color: transparent; color: var(--main-color); border-color: #ccc; }
+#confirmNo:hover { background-color: #f1f1f1; border-color: #bbb; }
+
+/* --- ESTILOS DO TUTORIAL (MODIFICADO) --- */
+.tutorial-overlay {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  width: 100%;
+  backdrop-filter: blur(1px);
+  z-index: 1000;
+  display: none; /* Oculto por padrão */
+  align-items: center;
+  justify-content: center;
+  padding: 200px;
+}
+.tutorial-modal {
+  background: white;
+  padding: 25px 30px;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  max-width: 800px; /* Aumentado para layout horizontal */
+  width: 100%;
+  position: relative;
+  font-family: 'Poppins', sans-serif;
+}
+.tutorial-close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #888;
+}
+.tutorial-header h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: #333;
+  font-size: 22px;
+  text-align: center;
+}
+.tutorial-images-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+  margin-bottom: 40px;
+}
+.tutorial-image-placeholder {
+  width: 100%;
+  height: 200px; /* Diminuído para ser mais compacto */
+  background-color: #e9ecef;
+  border: 2px dashed #ced4da;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #6c757d;
+  font-weight: 500;
+  text-align: center;
+  font-size: 14px;
+  padding: 10px;
+}
+.tutorial-content p {
+  text-align: center;
+  color: #555;
+  font-size: 15px;
+  line-height: 1.5;
+  margin-bottom: 25px;
+}
+.tutorial-footer {
+  text-align: center;
+}
+.tutorial-footer button {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 25px;
+  border-radius: 6px;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.tutorial-footer button:hover {
+  background-color: #0056b3;
 }
