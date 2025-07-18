@@ -1,0 +1,37 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: #f1f2f6;
+}
+
+#container {
+  display: flex;
+  gap: 16px;
+  max-width: 100%;
+  max-height: 100vh;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+canvas {
+  border: 2px solid #ccc;
+  max-width: 80vw;
+  max-height: 80vh;
+}
+
+#controls {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+button, input[type="color"], input[type="range"] {
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}

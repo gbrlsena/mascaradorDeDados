@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Konsi Editor de Imagem</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="container">
+    <canvas id="canvas"></canvas>
+    <div id="controls">
+      <button id="selectBtn">Selecionar</button>
+      <button id="drawLineBtn">Linha</button>
+      <button id="drawArrowBtn">Seta</button>
+      <input type="color" id="colorPicker" value="#00b894">
+      <input type="range" id="pixelLevel" min="2" max="30" value="10" />
+      <button id="undoBtn">Desfazer</button>
+      <button id="redoBtn">Refazer</button>
+      <button id="downloadBtn">Download</button>
+      <input type="file" id="uploadInput" accept="image/*" />
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
