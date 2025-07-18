@@ -1,26 +1,193 @@
+<!--  Feito por Sena 💚  -->
+<!--  16/06/2025  -->
+<!--  Atualizado em 15/07/2025 - Posição e visibilidade do botão de Ajuda ajustadas -->
+
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Konsi Editor de Imagem</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Segurança de Dados e Editor | Konsi</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div id="container">
-    <canvas id="canvas"></canvas>
-    <div id="controls">
-      <button id="selectBtn">Selecionar</button>
-      <button id="drawLineBtn">Linha</button>
-      <button id="drawArrowBtn">Seta</button>
-      <input type="color" id="colorPicker" value="#00b894">
-      <input type="range" id="pixelLevel" min="2" max="30" value="10" />
-      <button id="undoBtn">Desfazer</button>
-      <button id="redoBtn">Refazer</button>
-      <button id="downloadBtn">Download</button>
-      <input type="file" id="uploadInput" accept="image/*" />
+ <!-- Seção Principal de Ferramentas -->
+  <section id="mascarador-container" aria-label="Ferramenta de Segurança de Dados">
+    <button id="ajuda-mascarador-btn" class="ajuda-btn">? Ajuda</button>
+    <h1>Mascarador de dados</h1>
+
+    <form class="mascarador-form" onsubmit="event.preventDefault(); copiar();">
+      <select id="tipo" aria-label="Tipo de ferramenta">
+        <option value="CPF">CPF</option>
+        <option value="E-mail">E-mail</option>
+        <option value="Número de telefone">Número de telefone</option>
+        <option value="Endereço">Endereço</option>
+        <option value="CEP">CEP</option>
+        <option value="Benefício ou Matrícula">Benefício ou Matrícula</option>
+        <option value="Dados Bancários">Dados Bancários</option>
+        <option value="Imagens">Imagens</option>
+      </select>
+      
+      <input id="entrada" placeholder="Digite aqui..." aria-label="Entrada para mascarar" autocomplete="off" />
+      <input id="agencia" placeholder="Digite a agência" style="display: none;" aria-label="Agência bancária" autocomplete="off" />
+      <input id="conta" placeholder="Digite a conta" style="display: none;" aria-label="Conta bancária" autocomplete="off" />
+      <button id="botaoCopiar" disabled>Copiar</button>
+    </form>
+    
+    <div id="mascarador-output-container">
+        <div class="output" id="saida" role="region" aria-live="polite" aria-atomic="true"></div>
+        <p class="note" id="mensagemPadrao">Antes de enviar ao cliente, avalie se este dado é realmente essencial para o atendimento.</p>
+        <br>
+        <div id="alerta-bancario" role="alert" aria-live="assertive">
+          🔒 <strong>Atenção!</strong><br>
+          Dados bancários são dados sensíveis. Se for necessário confirmar algo, compartilhe <strong>somente o essencial</strong> e de forma mascarada. Isso garante a segurança do cliente e da Konsi.
+        </div>
+    </div>
+  </section>
+
+  <!-- Container do Editor de Imagens (inicialmente oculto) -->
+  <div id="imagem-editor-container" style="display: none; width: 100%; align-items: center; justify-content: center;">
+      <div class="main-layout">
+        <div class="canvas-wrapper" id="canvasWrapper">
+          <canvas id="mainCanvas" tabindex="0"></canvas>
+          <canvas id="previewCanvas"></canvas>
+          <div id="selectionBox"></div>
+        </div>
+        <aside class="controls" role="region" aria-label="Controles do Editor de Imagem">
+          <div style="text-align: right; margin-bottom: -10px;">
+              <button id="ajuda-imagens-btn" class="ajuda-btn">? Ajuda</button>
+          </div>
+          <div class="control-group">
+            <label for="upload">Carregar Imagem</label>
+            <input type="file" id="upload" accept="image/*" />
+            <p class="paste-info">Ou cole (<kbd>Ctrl</kbd>+<kbd>V</kbd>) ou arraste.</p>
+          </div>
+          <div class="control-group">
+            <label>Ferramenta Ativa</label>
+            <div class="tool-selection">
+              <button class="tool-btn active" data-tool="pixelate">🔲 Pixelizar</button>
+              <button class="tool-btn" data-tool="line">📏 Linha</button>
+              <button class="tool-btn" data-tool="arrow">↗️ Seta</button>
+            </div>
+          </div>
+          <div id="pixelControls" class="control-group">
+            <label for="pixelSize">Tamanho do Pixel: <span id="pixelValue">10</span>px</label>
+            <input type="range" id="pixelSize" min="1" max="50" value="10" />
+          </div>
+          <div id="drawControls" class="control-group hidden">
+            <label for="lineWidth">Opções de Desenho:</label>
+            <div class="drawing-controls">
+              <input type="color" id="lineColor" value="#e74c3c" title="Selecionar Cor">
+              <div class="slider-container">
+                <input type="range" id="lineWidth" min="1" max="50" value="10" title="Espessura da Linha">
+                <div style="text-align:left; font-size:0.9em;"><span id="lineWidthValue">5</span>px</div>
+              </div>
+            </div>
+          </div>
+          <div class="btn-group">
+            <button id="undoBtn" disabled>↩️ Desfazer</button>
+            <button id="redoBtn" disabled>↪️ Refazer</button>
+            <button id="downloadBtn" disabled>📥 Baixar</button>
+            <button id="clearBtn" disabled>🗑️ Limpar</button>
+          </div>
+        </aside>
+      </div>
+      <div id="overlay" class="hidden"></div>
+      <div id="confirmDialog" class="hidden" role="dialog" aria-modal="true" aria-labelledby="confirmDialogTitle">
+        <h2 id="confirmDialogTitle">Confirmar Ação</h2>
+        <p>Tem certeza de que deseja limpar a imagem e todas as alterações? Esta ação não pode ser desfeita.</p>
+        <div class="dialog-actions">
+          <button id="confirmNo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></svg> Não, Cancelar</button>
+          <button id="confirmYes"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/></svg> Sim, Limpar</button>
+        </div>
+      </div>
+  </div>
+<br>
+  <!-- Conteúdo de Apoio (tabelas, etc) -->
+  <main>
+    <h2>Informações Permitidas e Restritas na Konsi</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Tipo de Informação</th>
+          <th>Permitido Compartilhar?</th>
+          <th>Orientações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>CPF</td><td class="warning">⚠️ Com cuidado</td><td>Apenas de forma mascarada: ***.***.**1-23</td></tr>
+        <tr><td>E-mail</td><td class="warning">⚠️ Com cuidado</td><td>Apenas de forma mascarada: kon***i@k***.com</td></tr>
+        <tr><td>Número do Benefício ou Matrícula</td><td class="warning">⚠️ Com cuidado</td><td>Apenas de forma mascarada: ******456</td></tr>
+        <tr><td>Número de telefone</td><td class="warning">⚠️ Com cuidado</td><td>Apenas de forma mascarada: ****7789</td></tr>
+        <tr><td>Endereço</td><td class="warning">⚠️ Com cuidado</td><td>Apenas de forma mascarada: Rua Art*** Azev***  Mach***, CEP: ***60-000</td></tr>
+        <tr><td>Nome do cliente</td><td>✅ Sim</td><td>Apenas se necessário. Dê preferencia a usar apenas o primeiro nome.</td></tr>
+        <tr><td>Convênio</td><td>✅ Sim</td><td>Apenas se necessário.</td></tr>
+        <tr><td>Número do contrato</td><td>✅ Sim</td><td>Apenas se necessário.</td></tr>
+        <tr><td>Status da proposta (Em análise, Em progresso, etc.)</td><td>✅ Sim</td><td>Devemos compartilhar!</td></tr>
+        <tr><td>Dados da proposta</td><td>✅ Sim</td><td>Devemos compartilhar!</td></tr>
+        <tr><td>Dados bancários do cliente</td><td class="danger">❌ Restrito</td><td>Evite repassar. Mas, se for necessário confirmar algo com o cliente, compartilhe apenas o essencial.</td></tr>
+        <tr><td>Prints do sistema com dados visíveis</td><td class="danger">❌ Restrito</td><td>Evite sempre. Se necessário, use a ferramenta de Imagens acima para ocultar dados sensíveis.</td></tr>
+        <tr><td>Documentos</td><td class="danger">🚫 Proibido</td><td>Mesmo com a confirmação de identidade, os documentos não devem ser enviados ao cliente.</td></tr>
+        <tr><td>Dados de outro cliente</td><td class="danger">🚫 Proibido</td><td>Não devem ser repassadas aos clientes.</td></tr>
+        <tr><td>Informações internas da empresa</td><td class="danger">🚫 Proibido</td><td>Não devem ser repassadas aos clientes.</td></tr>
+      </tbody>
+    </table>
+  </main>
+
+  <main>
+    <h2>Boas Práticas na Hora de Tratar os Dados do Cliente</h2>
+    <div class="tip"><strong>1. Confirme a identidade antes de tudo</strong> Nunca passe informações pessoais antes de verificar se está falando com o próprio cliente (titular).<br></div>
+    <div class="tip"><strong>2. Use os canais oficiais</strong> Compartilhe dados apenas pelos canais autorizados, como HyperFlow. Nunca use canais pessoais.</div>
+    <div class="tip"><strong>3. Evite prints com dados sensíveis</strong> Ao enviar prints, apague ou cubra dados como CPF ou número de contrato. Prefira textos objetivos e claros.</div>
+    <div class="tip"><strong>4. Compartilhe só o necessário</strong> Transmita apenas as informações relevantes para o atendimento. Evite enviar documentos inteiros sem necessidade.</div>
+    <div class="tip"><strong>5. Avise sobre qualquer coleta ou uso de dado</strong> Sempre explique para que servem os dados solicitados e reforce que está tudo de acordo com a LGPD.</div>
+    <div class="tip"><strong>6. Nunca compartilhe dados de outro cliente</strong> Nunca envie documentos ou informações erradas. Isso é uma falha grave e pode comprometer a segurança.</div>
+  </main>
+
+  <footer>Segurança da Informação é coisa séria 💚</footer>
+
+  <!-- INÍCIO DO HTML DO TUTORIAL -->
+  <div id="mascarador-tutorial" class="tutorial-overlay">
+    <div class="tutorial-modal">
+      <button class="tutorial-close-btn">×</button>
+      <div class="tutorial-header">
+        <h2>Como Usar?</h2>
+      </div>
+      <div class="tutorial-content">
+        <div class="tutorial-images-grid">
+            <div class="tutorial-image-placeholder"><b>Passo 1:</b><br>Selecione o tipo de dado (Ex: CPF).</div>
+            <div class="tutorial-image-placeholder"><b>Passo 2:</b><br>Digite a informação. Lembrando que precisa ser o número exato de dígitos! (Ex: 11 dígitos para o CPF)</div>
+            <div class="tutorial-image-placeholder"><b>Passo 3:</b><br>Clique em "Copiar" e use o CTRL + C.</div>
+        </div>
+        <p>Esta ferramenta ajuda a proteger os dados do cliente, ocultando partes da informação sensível antes de compartilhar.</p>
+      </div>
+      <div class="tutorial-footer">
+        <button class="tutorial-ok-btn">Entendi!</button>
+      </div>
     </div>
   </div>
+
+  <div id="imagens-tutorial" class="tutorial-overlay">
+    <div class="tutorial-modal">
+      <button class="tutorial-close-btn">×</button>
+      <div class="tutorial-header">
+        <h2>Conheça o Editor de Imagens! 🖼️</h2>
+      </div>
+      <div class="tutorial-content">
+        <div class="tutorial-images-grid">
+            <div class="tutorial-image-placeholder"><b>Passo 1:</b><br>Arraste uma imagem ou clique para carregar.</div>
+            <div class="tutorial-image-placeholder"><b>Passo 2:</b><br>Selecione a ferramenta (Ex: Pixelizar) e aplique na área desejada.</div>
+            <div class="tutorial-image-placeholder"><b>Passo 3:</b><br>Clique em "Baixar" para salvar a imagem segura.</div>
+        </div>
+        <p>Use esta ferramenta para borrar ou pixelizar informações sensíveis em prints antes de enviá-los.</p>
+      </div>
+      <div class="tutorial-footer">
+        <button class="tutorial-ok-btn">Entendi!</button>
+      </div>
+    </div>
+  </div>
+  <!-- FIM DO HTML DO TUTORIAL -->
+
   <script src="script.js"></script>
 </body>
 </html>
