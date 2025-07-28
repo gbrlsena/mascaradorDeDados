@@ -9,53 +9,26 @@ const botaoCopiar = document.getElementById('botaoCopiar');
 function maskData(tipo, valor) {
   const numeros = valor.replace(/\D/g, '');
   switch (tipo) {
-    case 'CPF':
-      if (numeros.length !== 11) return '';
-      return numeros.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, '∗∗∗.∗∗∗.∗∗∗-$4');
-    
+    case 'CPF': return numeros.replace(/^.*(\d{3})(\d{2})$/, '∗∗∗.∗∗∗.$1-$2');
     case 'E-mail': {
-      const [user, domain] = valor.split('@');
-      if (!user || !domain) return valor;
-      const [dom, ext] = domain.split('.');
-      if (!dom || !ext) return valor;
+      const [user, domain] = valor.split('@'); if (!user || !domain) return valor;
+      const [dom, ext] = domain.split('.'); if (!dom || !ext) return valor;
       const userMasked = user.slice(0, 3) + '∗∗∗' + user.slice(-1);
-      const domainMasked = dom[0] + '∗∗∗';
-      return `${userMasked}@${domainMasked}.${ext}`;
+      const domainMasked = dom[0] + '∗∗∗'; return `${userMasked}@${domainMasked}.${ext}`;
     }
-
-    case 'Número de telefone':
-      return numeros.replace(/^.*(?=\d{4})/, '∗∗∗∗∗∗∗');
-
-    case 'Endereço':
-      return valor.split(' ').map(p => {
+    case 'Número de telefone': return numeros.replace(/^.*(?=\d{4})/, '∗∗∗∗∗∗∗');
+    case 'Endereço': return valor.split(' ').map(p => {
         if (/^(Rua|Travessa)$/i.test(p)) return p;
-        if (p.length > 3) return p.slice(0, 3) + '∗∗∗';
-        return p;
+        if (p.length > 3) return p.slice(0, 3) + '∗∗∗'; return p;
       }).join(' ');
-
-    case 'CEP':
-      return numeros.length === 8 ? numeros.replace(/(\d{3})(\d{2})(\d{3})$/, '∗∗∗$2-$3') : '';
-
-    case 'Benefício ou Matrícula':
-      return numeros.replace(/\d(?=\d{3})/g, '∗');
-
-    case 'Agência': {
-      if (numeros.length === 0) return '';
-      if (numeros.length === 1) return '∗' + numeros;
-      return numeros.slice(0, -1).replace(/\d/g, '∗') + numeros.slice(-1);
-    }
-
-    case 'Conta': {
-      if (numeros.length < 5) return '';
-      const digitosMascarados = numeros.slice(0, -1).replace(/\d/g, '∗');
-      const ultimoDigito = numeros.slice(-1);
-      return `${digitosMascarados}-${ultimoDigito}`;
-    }
-
-    default:
-      return valor;
+    case 'CEP': return numeros.length === 8 ? numeros.replace(/(\d{3})(\d{2})(\d{3})$/, '∗∗∗$2-$3') : '';
+    case 'Benefício ou Matrícula': return numeros.replace(/\d(?=\d{3})/g, '∗');
+    case 'Agência': if (numeros.length === 1) return '∗∗' + numeros; return numeros.replace(/^.*(?=\d{1})/, '∗∗∗');
+    case 'Conta': if (numeros.length < 5) return ''; return numeros.replace(/^.*(?=\d{3})/, '∗∗∗');
+    default: return valor;
   }
 }
+
 
 // VERSÃO NOVA 
 function copiar() {
@@ -146,7 +119,7 @@ function atualizar() {
             }
 
             const resultado = maskData(tipo, valor);
-            if (resultado !== valor && resultado.includes('*')) {
+            if (resultado !== valor && resultado.includes('∗')) {
                 saidaEl.textContent = resultado;
                 botaoCopiar.disabled = false;
             } else {
